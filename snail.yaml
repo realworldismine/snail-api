@@ -44,7 +44,7 @@ paths:
   /image:
     post:
       operationId: RegisterSnailImage
-      summary: Register a snail image.
+      summary: Register a snail image
       tags:
         - Images
       requestBody:
@@ -75,7 +75,7 @@ paths:
       description: Return a list of upcoming special events at the museum.
       operationId: listSnailImages
       tags:
-        - Events
+        - Images
       parameters:
         - $ref: '#/components/parameters/StartDate'
         - $ref: '#/components/parameters/EndDate'
@@ -126,7 +126,7 @@ paths:
           description: Not found          
   /info/intro:
     get:
-      summary: Get an introduced article about snail API.
+      summary: Introduction
       description: Return a content about snail API.
       operationId: getIntroducedInfo
       tags:
