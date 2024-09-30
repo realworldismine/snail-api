@@ -1,0 +1,352 @@
+openapi: 3.1.0
+info:
+  title: Snail API
+  description: A simple snail API for interacting with snail images and information.
+  version: 1.0.0
+  contact:
+    email: rwim@naver.com
+    url: 'https://example.com/'
+  x-logo:
+    url: 'https://redocly.github.io/redoc/museum-logo.png'
+    altText: Snail logo
+  license:
+    name: MIT
+    url: 'https://opensource.org/license/mit/ '
+servers:
+  - url: 'https://api.fake-museum-example.com/v1'
+paths:
+  '/image/{snailId}':
+    get:
+      summary: Get a snail image
+      description: Return a specific snail image using specific ID
+      operationId: getSnailById
+      tags:
+        - Images
+      parameters:
+        - $ref: '#/components/parameters/UserAgent'
+        - $ref: '#/components/parameters/SnailId'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetSnailImage'
+              examples:
+                default:
+                  $ref: '#/components/examples/GetSnailRawImageExample'
+                mobile:
+                  $ref: '#/components/examples/GetSnailMobileImageExample'
+        '400':
+          description: Bad request
+        '404':
+          description: Not found
+  /image:
+    post:
+      operationId: RegisterSnailImage
+      summary: Register a snail image.
+      tags:
+        - Images
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterSnailImage'
+            examples:
+              default_example:
+                $ref: '#/components/examples/RegisterSnailImageExample'
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegisterSnailImageResponse'
+              examples:
+                default_example:
+                  $ref: '#/components/examples/RegisterSnailImageResponseExample'
+        '400':
+          description: Bad request
+        '404':
+          description: Not found
+    get:
+      summary: List snail images
+      description: Return a list of upcoming special events at the museum.
+      operationId: listSnailImages
+      tags:
+        - Events
+      parameters:
+        - $ref: '#/components/parameters/StartDate'
+        - $ref: '#/components/parameters/EndDate'
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListSnailImagesResponse'
+              examples:
+                default:
+                  $ref: '#/components/examples/ListSnailImagesRawResponseExample'
+                mobile:
+                  $ref: '#/components/examples/ListSnailImagesMobileResponseExample'
+        '400':
+          description: Bad request
+        '404':
+          description: Not found
+  /random:
+    get:
+      summary: List random snail images
+      description: Return a list of random snail images.
+      operationId: listRandomSnailImages
+      tags:
+        - Images
+      parameters:
+        - $ref: '#/components/parameters/UserAgent'
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListSnailImagesResponse'
+              examples:
+                default:
+                  $ref: '#/components/examples/ListRandomSnailImagesRawResponseExample'
+                mobile:
+                  $ref: '#/components/examples/ListRandomSnailImagesMobileResponseExample'
+        '400':
+          description: Bad request
+        '404':
+          description: Not found          
+  /info/intro:
+    get:
+      summary: Get an introduced article about snail API.
+      description: Return a content about snail API.
+      operationId: getIntroducedInfo
+      tags:
+        - Info
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetIntroducedInfo'
+              example:
+                $ref: '#/components/examples/GetIntroducedInfoExample'
+components:
+  schemas:
+    SnailId:
+      description: Snail ID
+      type: integer
+      example: 1
+    RegisterDate:
+      description: Register Date
+      type: string
+      example: '2024-09-30'
+    ImageUrl:
+      description: Image URL
+      type: string
+      example: 'https://example.com/images/raw/240930_0001.png'
+    GetSnailImage:
+      description: Single image information
+      type: object
+      properties:
+        date:
+          $ref: '#/components/schemas/RegisterDate'
+        url:
+          $ref: '#/components/schemas/ImageUrl'
+    ListSnailImagesResponse:
+      description: A list of snail images
+      type: array
+      items:
+        $ref: '#/components/schemas/GetSnailImage'
+    GetIntroducedInfo:
+      description: The snail API introduction
+      type: object
+      properties:
+        title:
+          description: The title of introduction
+          type: string
+          example: Introduce the snail API
+        content:
+          description: The content of introduction
+          type: string
+          example: Welcome the snail API
+        environment:
+          $ref: '#/components/schemas/GetEnvInfo'
+    GetEnvInfo:
+      description: Introduction of the environment about the snail API
+      type: object
+      properties:
+        platform: 
+          description: Deployment platform
+          type: string
+          example: Serverless architecture
+        compute:
+          description: Compute Engine
+          type: string
+          example: AWS Lambda
+        api:
+          description: API Engine
+          type: string
+          example: API Gateway
+        database: 
+          description: Database for saving metadata
+          type: string
+          example: DynamoDB
+        storage: 
+          description: Image and static pages for saving data
+          type: string
+          example: Amazon S3
+    RegisterSnailImage:
+      description: Request payload for registering new snail image.
+      type: object
+      properties:
+        url:
+          $ref: '#/components/schemas/ImageUrl'
+      required:
+        - url
+    RegisterSnailImageResponse:
+      description: Information about a image registration.
+      type: object
+      properties:
+        snailId:
+          $ref: "#/components/schemas/SnailId"
+        date:
+          $ref: "#/components/schemas/RegisterDate"
+        url:
+          $ref: "#/components/schemas/ImageUrl"
+      required:
+        - snailId
+        - date
+        - url
+  examples:
+    GetSnailRawImageExample:
+      summary: Raw Image
+      value:
+        date: '2024-09-30'
+        url: 'https://example.com/images/raw/240930_0001.png'
+    GetSnailMobileImageExample:
+      summary: Mobile Image
+      value:
+        date: '2024-09-30'
+        url: 'https://example.com/images/sm/240930_0001.png'
+    RegisterSnailImageExample:
+      summary: Register a snail image
+      value:
+        url: 'https://example.com/images/raw/240930_0001.png'
+    RegisterSnailImageResponseExample:
+      summary: Register a snail image
+      value:
+        snailId: 1
+        date: '2024-09-30'
+        url: 'https://example.com/images/raw/240930_0001.png'
+    ListSnailImagesRawResponseExample:
+      summary: Raw Images
+      value:
+        - date: '2024-09-28'
+          url: 'https://example.com/images/raw/240928_0001.png'
+        - date: '2024-09-29'
+          url: 'https://example.com/images/raw/240929_0002.png'
+        - date: '2024-09-30'
+          url: 'https://example.com/images/raw/240930_0003.png'
+    ListSnailImagesMobileResponseExample:
+      summary: Mobile Images
+      value:
+        - date: '2024-09-22'
+          url: 'https://example.com/images/sm/240922_0006.png'
+        - date: '2024-09-23'
+          url: 'https://example.com/images/sm/240923_0007.png'
+        - date: '2024-09-24'
+          url: 'https://example.com/images/sm/240924_0008.png'
+    ListRandomSnailImagesRawResponseExample:
+      summary: Raw Images
+      value:
+        - date: '2024-09-29'
+          url: 'https://example.com/images/raw/240929_0008.png'
+        - date: '2024-09-28'
+          url: 'https://example.com/images/raw/240928_0007.png'
+        - date: '2024-09-30'
+          url: 'https://example.com/images/raw/240930_0001.png'
+    ListRandomSnailImagesMobileResponseExample:
+      summary: Mobile Images
+      value:
+        - date: '2024-09-30'
+          url: 'https://example.com/images/sm/240930_0006.png'
+        - date: '2024-09-22'
+          url: 'https://example.com/images/sm/240922_0004.png'
+        - date: '2024-09-25'
+          url: 'https://example.com/images/sm/240925_0002.png'
+    GetIntroducedInfoExample:
+      value:
+        title: Introduce the snail API
+        content: Welcome the snail API
+        environment:
+          platform: Serverless architecture
+          compute: AWS Lambda
+          api: API Gateway
+          database: DynamoDB
+          storage: Amazon S3
+  parameters:
+    UserAgent:
+      in: header
+      name: User-Agent
+      required: true
+      schema:
+        type: string
+        description: The User-Agent header containing information about the client's browser and device type.
+    SnailId:
+      name: id
+      in: query
+      description: The snail ID.
+      schema:
+        type: integer
+        example: 1
+    StartDate:
+      name: startDate
+      in: query
+      description: The starting date to retrieve future operating hours from. Defaults to today's date.
+      schema:
+        type: string
+        format: date
+        example: 2023-02-23
+    EndDate:
+      name: endDate
+      in: query
+      description: The end of a date range to retrieve special events for. Defaults to 7 days after `startDate`.
+      schema:
+        type: string
+        format: date
+        example: 2023-04-18
+    Page:
+      name: page
+      in: query
+      description: The page number to retrieve.
+      schema:
+        type: integer
+        default: 1
+        example: 2
+    Limit:
+      name: limit
+      in: query
+      description: The number of days per page.
+      schema:
+        type: integer
+        default: 10
+        maximum: 30
+        example: 15
+
+tags:
+  - name: Images
+    x-displayName: Images
+    description: Images for some snails
+  - name: Info
+    x-displayName: Info
+    description: Information about snails
