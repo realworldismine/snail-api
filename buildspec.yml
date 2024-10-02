@@ -11,3 +11,7 @@ phases:
 artifacts:
   files:
     - redoc.html
+
+cache:
+  paths:
+    - /root/.npm/**/*
