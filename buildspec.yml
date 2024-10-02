@@ -1,0 +1,13 @@
+version: 0.2
+
+phases:
+  install:
+    commands:
+      - npm install -g redoc-cli
+  build:
+    commands:
+      - redoc-cli bundle snail.yaml -o redoc.html
+
+artifacts:
+  files:
+    - redoc.html
