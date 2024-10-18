@@ -15,16 +15,13 @@ info:
 servers:
   - url: 'https://api.fake-museum-example.com/v1'
 paths:
-  '/image/{snailId}':
+  '/snail/{ImageId}':
     get:
       summary: Get a snail image
       description: Return a specific snail image using specific ID
       operationId: getSnailById
       tags:
         - Images
-      parameters:
-        - $ref: '#/components/parameters/UserAgent'
-        - $ref: '#/components/parameters/SnailId'
       responses:
         '200':
           description: Success
@@ -41,7 +38,7 @@ paths:
           description: Bad request
         '404':
           description: Not found
-  /image:
+  /snail:
     post:
       operationId: RegisterSnailImage
       summary: Register a snail image
@@ -105,7 +102,6 @@ paths:
       tags:
         - Images
       parameters:
-        - $ref: '#/components/parameters/UserAgent'
         - $ref: '#/components/parameters/Page'
         - $ref: '#/components/parameters/Limit'
       responses:
@@ -150,10 +146,14 @@ components:
       description: Register Date
       type: string
       example: '2024-09-30'
+    ImageData:
+      decription: Image Raw Data
+      type: string
+      format: binary
     ImageUrl:
       description: Image URL
       type: string
-      example: 'https://example.com/images/raw/240930_0001.png'
+      example: 'https://example.com/raw/240930_0001.png'
     GetSnailImage:
       description: Single image information
       type: object
@@ -209,8 +209,8 @@ components:
       description: Request payload for registering new snail image.
       type: object
       properties:
-        url:
-          $ref: '#/components/schemas/ImageUrl'
+        data:
+          $ref: '#/components/schemas/ImageData'
       required:
         - url
     RegisterSnailImageResponse:
@@ -232,58 +232,58 @@ components:
       summary: Raw Image
       value:
         date: '2024-09-30'
-        url: 'https://example.com/images/raw/240930_0001.png'
+        url: 'https://example.com/images/raw/473806aff17779875691.png'
     GetSnailMobileImageExample:
       summary: Mobile Image
       value:
         date: '2024-09-30'
-        url: 'https://example.com/images/sm/240930_0001.png'
+        url: 'https://example.com/images/mobile/473806aff17779875691.png'
     RegisterSnailImageExample:
       summary: Register a snail image
       value:
-        url: 'https://example.com/images/raw/240930_0001.png'
+        data: 'ABCDEF0123456...'
     RegisterSnailImageResponseExample:
       summary: Register a snail image
       value:
         snailId: 1
         date: '2024-09-30'
-        url: 'https://example.com/images/raw/240930_0001.png'
+        url: 'https://example.com/images/raw/473806aff17779875691.png'
     ListSnailImagesRawResponseExample:
       summary: Raw Images
       value:
         - date: '2024-09-28'
-          url: 'https://example.com/images/raw/240928_0001.png'
+          url: 'https://example.com/images/raw/473806aff17779875691.png'
         - date: '2024-09-29'
-          url: 'https://example.com/images/raw/240929_0002.png'
+          url: 'https://example.com/images/raw/473806aff17779875692.png'
         - date: '2024-09-30'
-          url: 'https://example.com/images/raw/240930_0003.png'
+          url: 'https://example.com/images/raw/473806aff17779875693.png'
     ListSnailImagesMobileResponseExample:
       summary: Mobile Images
       value:
         - date: '2024-09-22'
-          url: 'https://example.com/images/sm/240922_0006.png'
+          url: 'https://example.com/images/mobile/473806aff17779875691.png'
         - date: '2024-09-23'
-          url: 'https://example.com/images/sm/240923_0007.png'
+          url: 'https://example.com/images/mobile/473806aff17779875692.png'
         - date: '2024-09-24'
-          url: 'https://example.com/images/sm/240924_0008.png'
+          url: 'https://example.com/images/mobile/473806aff17779875693.png'
     ListRandomSnailImagesRawResponseExample:
       summary: Raw Images
       value:
         - date: '2024-09-29'
-          url: 'https://example.com/images/raw/240929_0008.png'
+          url: 'https://example.com/images/raw/473806aff17779875691.png'
         - date: '2024-09-28'
-          url: 'https://example.com/images/raw/240928_0007.png'
+          url: 'https://example.com/images/raw/473806aff17779875692.png'
         - date: '2024-09-30'
-          url: 'https://example.com/images/raw/240930_0001.png'
+          url: 'https://example.com/images/raw/473806aff17779875693.png'
     ListRandomSnailImagesMobileResponseExample:
       summary: Mobile Images
       value:
         - date: '2024-09-30'
-          url: 'https://example.com/images/sm/240930_0006.png'
+          url: 'https://example.com/images/mobile/473806aff17779875691.png'
         - date: '2024-09-22'
-          url: 'https://example.com/images/sm/240922_0004.png'
+          url: 'https://example.com/images/mobile/473806aff17779875692.png'
         - date: '2024-09-25'
-          url: 'https://example.com/images/sm/240925_0002.png'
+          url: 'https://example.com/images/mobile/473806aff17779875693.png'
     GetIntroducedInfoExample:
       value:
         title: Introduce the snail API
@@ -295,13 +295,6 @@ components:
           database: DynamoDB
           storage: Amazon S3
   parameters:
-    UserAgent:
-      in: header
-      name: User-Agent
-      required: true
-      schema:
-        type: string
-        description: The User-Agent header containing information about the client's browser and device type.
     SnailId:
       name: id
       in: query
