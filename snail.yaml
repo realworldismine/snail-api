@@ -74,7 +74,7 @@ paths:
       tags:
         - Images
       parameters:
-        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Count'
       responses:
         '200':
           description: Success
@@ -458,7 +458,16 @@ components:
     Limit:
       name: limit
       in: query
-      description: The number of days per page.
+      description: The number of data per page.
+      schema:
+        type: integer
+        default: 10
+        maximum: 30
+        example: 15
+    Count:
+      name: count
+      in: query
+      description: The number of data.
       schema:
         type: integer
         default: 10
