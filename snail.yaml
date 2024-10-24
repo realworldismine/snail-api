@@ -74,7 +74,6 @@ paths:
       tags:
         - Images
       parameters:
-        - $ref: '#/components/parameters/Page'
         - $ref: '#/components/parameters/Limit'
       responses:
         '200':
