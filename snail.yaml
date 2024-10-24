@@ -15,7 +15,7 @@ info:
 servers:
   - url: 'https://api.fake-museum-example.com/v1'
 paths:
-  '/snail/{ImageId}':
+  '/snail/{SnailId}':
     get:
       summary: Get a snail image
       description: Return a specific snail image using specific ID
@@ -39,37 +39,9 @@ paths:
         '404':
           description: Not found
   /snail:
-    post:
-      operationId: RegisterSnailImage
-      summary: Register a snail image
-      tags:
-        - Images
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/RegisterSnailImage'
-            examples:
-              default_example:
-                $ref: '#/components/examples/RegisterSnailImageExample'
-      responses:
-        '200':
-          description: success
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RegisterSnailImageResponse'
-              examples:
-                default_example:
-                  $ref: '#/components/examples/RegisterSnailImageResponseExample'
-        '400':
-          description: Bad request
-        '404':
-          description: Not found
     get:
       summary: List snail images
-      description: Return a list of upcoming special events at the museum.
+      description: Return a list of snail images.
       operationId: listSnailImages
       tags:
         - Images
@@ -119,7 +91,98 @@ paths:
         '400':
           description: Bad request
         '404':
-          description: Not found          
+          description: Not found
+  '/info/{InfoId}':
+    get:
+      summary: Get a snail info using ID
+      description: Return a specific snail info using specific ID
+      operationId: getInfoById
+      tags:
+        - Info
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetSnailInfo'
+              examples:
+                default:
+                  $ref: '#/components/examples/GetSnailInfoExample'
+        '400':
+          description: Bad request
+        '404':
+          description: Not found
+  '/info/{Category}':
+    get:
+      summary: Get a snail info using category
+      description: Return a specific snail info using specific category
+      operationId: getInfoByCategory
+      tags:
+        - Info
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetSnailInfo'
+              examples:
+                default:
+                  $ref: '#/components/examples/GetSnailInfoExample'
+        '400':
+          description: Bad request
+        '404':
+          description: Not found
+  /info:
+    get:
+      summary: Get all snail information
+      description: Return all snail information
+      operationId: getAllInfo
+      tags:
+        - Info
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AllSnailInfoResponse'
+              examples:
+                default:
+                  $ref: '#/components/examples/AllSnailInfoResponseExample'
+        '400':
+          description: Bad request
+        '404':
+          description: Not found
+    post:
+      operationId: RegisterInfo
+      summary: Register a snail information
+      tags:
+        - Info
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterSnailInfo'
+            examples:
+              default_example:
+                $ref: '#/components/examples/RegisterSnailInfoExample'
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegisterSnailInfoResponse'
+              examples:
+                default_example:
+                  $ref: '#/components/examples/RegisterSnailInfoResponseExample'
+        '400':
+          description: Bad request
+        '404':
+          description: Not found
   /info/intro:
     get:
       summary: Introduction
@@ -146,14 +209,22 @@ components:
       description: Register Date
       type: string
       example: '2024-09-30'
-    ImageData:
-      decription: Image Raw Data
-      type: string
-      format: binary
+    InfoId:
+      decription: Information ID
+      type: integer
+      example: 1
     ImageUrl:
       description: Image URL
       type: string
       example: 'https://example.com/raw/240930_0001.png'
+    InfoCategory:
+      description: Category of informations
+      type: string
+      example: 'Property'
+    InfoContent:
+      description: Category of informations
+      type: string
+      example: 'A snail eats ...'
     GetSnailImage:
       description: Single image information
       type: object
@@ -164,11 +235,28 @@ components:
           $ref: '#/components/schemas/RegisterDate'
         url:
           $ref: '#/components/schemas/ImageUrl'
+    GetSnailInfo:
+      description: Single information
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/InfoId'
+        date:
+          $ref: '#/components/schemas/RegisterDate'
+        category:
+          $ref: '#/components/schemas/InfoCategory'
+        content:
+          $ref: '#/components/schemas/InfoContent'
     ListSnailImagesResponse:
       description: A list of snail images
       type: array
       items:
         $ref: '#/components/schemas/GetSnailImage'
+    AllSnailInfoResponse:
+      description: All snail information
+      type: array
+      items:
+        $ref: '#/components/schemas/GetSnailInfo'
     GetIntroducedInfo:
       description: The snail API introduction
       type: object
@@ -207,28 +295,34 @@ components:
           description: Image and static pages for saving data
           type: string
           example: Amazon S3
-    RegisterSnailImage:
-      description: Request payload for registering new snail image.
+    RegisterSnailInfo:
+      description: Request payload for registering new snail information.
       type: object
       properties:
-        data:
-          $ref: '#/components/schemas/ImageData'
+        category:
+          $ref: '#/components/schemas/InfoCategory'
+        content:
+          $ref: '#/components/schemas/InfoContent'
       required:
-        - url
-    RegisterSnailImageResponse:
-      description: Information about a image registration.
+        - category
+        - content
+    RegisterSnailInfoResponse:
+      description: Information about the registered information.
       type: object
       properties:
-        snailId:
-          $ref: "#/components/schemas/SnailId"
+        id:
+          $ref: "#/components/schemas/InfoId"
         date:
           $ref: "#/components/schemas/RegisterDate"
-        url:
-          $ref: "#/components/schemas/ImageUrl"
+        category:
+          $ref: '#/components/schemas/InfoCategory'
+        content:
+          $ref: '#/components/schemas/InfoContent'
       required:
-        - snailId
+        - id
         - date
-        - url
+        - category
+        - content
   examples:
     GetSnailRawImageExample:
       summary: Raw Image
@@ -242,16 +336,25 @@ components:
         id: 1
         date: '2024-09-30'
         url: 'https://example.com/images/mobile/473806aff17779875691.png'
-    RegisterSnailImageExample:
-      summary: Register a snail image
-      value:
-        data: 'ABCDEF0123456...'
-    RegisterSnailImageResponseExample:
-      summary: Register a snail image
+    GetSnailInfoExample:
+      summary: A Snail Inforatmion
       value:
         id: 1
         date: '2024-09-30'
-        url: 'https://example.com/images/raw/473806aff17779875691.png'
+        category: 'Property'
+        content: 'A snail eats...'        
+    RegisterSnailInfoExample:
+      summary: Register a snail information
+      value:
+        category: 'Property'
+        content: 'A snail eats ...'
+    RegisterSnailInfoResponseExample:
+      summary: Response about a snail information registration
+      value:
+        id: 1
+        date: '2024-09-30'
+        category: 'Property'
+        content: 'A snail eats ...'
     ListSnailImagesRawResponseExample:
       summary: Raw Images
       value:
@@ -300,6 +403,17 @@ components:
         - id: 2
           date: '2024-09-25'
           url: 'https://example.com/images/mobile/473806aff17779875693.png'
+    AllSnailInfoResponseExample:
+      summary: All Snail Inforatmion
+      value:
+        - id: 1
+          date: '2024-09-30'
+          category: 'Property'
+          content: 'A snail eats...'
+        - id: 2
+          date: '2024-10-22'
+          category: 'Lissachatina fulica'
+          content: 'Lissachatina fulica is a species of large land snail...'
     GetIntroducedInfoExample:
       value:
         title: Introduce the snail API
